@@ -22,7 +22,7 @@ const getUserWithEmail = function(email) {
     SELECT * FROM users
     WHERE email ILIKE $1
   `, [email])
-  .then(result => console.log(result.rows[0]))
+  .then(result => result.rows[0])
 }
 exports.getUserWithEmail = getUserWithEmail;
 
@@ -66,7 +66,16 @@ exports.addUser = addUser;
  * @return {Promise<[{}]>} A promise to the reservations.
  */
 const getAllReservations = function(guest_id, limit = 10) {
-  return getAllProperties(null, 2);
+  // return getAllProperties(null, 2);
+  return pool.query(
+    `SELECT * FROM reservations
+    JOIN properties ON properties.id = property_id
+    WHERE guest_id = $1
+    LIMIT $2
+    `, [guest_id, limit]
+  )
+  .then(result => result.rows)
+
 }
 exports.getAllReservations = getAllReservations;
 
@@ -79,12 +88,6 @@ exports.getAllReservations = getAllReservations;
  * @return {Promise<[{}]>}  A promise to the properties.
  */
 const getAllProperties = function(options, limit = 10) {
-//   const limitedProperties = {};
-//   for (let i = 1; i <= limit; i++) {
-//     limitedProperties[i] = properties[i];
-//   }
-//   return Promise.resolve(limitedProperties);
-// }
 return pool.query(`SELECT * FROM properties LIMIT $1;`,[limit])
   .then((result) => result.rows)
   .catch((err) => console.log(err.message))
