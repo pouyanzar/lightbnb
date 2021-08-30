@@ -177,8 +177,8 @@ const addProperty = function(property) {
       property.parking_spaces,
       property.number_of_bathrooms,
       property.number_of_bedrooms 
-    ]);
-  // return Promise.resolve(property);
+    ])
+    .then(result => result.rows[0]);
 }
 exports.addProperty = addProperty;
 
